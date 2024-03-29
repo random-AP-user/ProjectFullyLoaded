@@ -1,0 +1,73 @@
+<%- include("partials/header") %>
+<header>
+    
+    <a class="link" href="/profile" style="width: 100px; padding: 5px 10px;">Profile</a>
+
+    <h1 style="text-align: center;">Fully&nbsp;loaded Bounty's</h1>
+    <div>
+        <a class="link" href="/" style="width: 100px; padding: 5px 10px;">home</a>
+    <% if(typeof username !== 'undefined'){ %>
+        <a class="link" href="/logout" style="width: 100px; padding: 5px 10px;">Log out</a>
+        <% } else{%>
+            <a class="link" href="/login" style="width: 100px; padding: 5px 10px;">Login</a>
+    <% } %>
+    </div>
+    <!-- <form id="search" style="width: 100%;" action="" method="post">
+            <input type="text" placeholder="find a users">
+            <input type="submit" value="search">
+    </form> -->
+</header>
+<main>
+    <h1 id="bountytitle">Available bounty</h1>
+    <div class="bounty">
+        <% AVusers.forEach((user) =>{%>
+        <form action="/addbounty" method="post">
+            <div>
+                <img src="images/<%= user.image %>" alt="Wanted Person">
+                <br>
+                <br>
+                <h3><%= user.username %></h3>
+                <div class="adminsubmit">
+                    <input type="text" name="userID" value="<%= user.userID %>" style="display: none;">
+                    <input type="text" name="price" value="<%= user.price %>" >
+                    <input type="submit" value="submit">
+                </div>
+            </div>
+        </form>
+        <% }) %>
+    </div>
+
+    <h1 id="bountytitle">Active bounty</h1>
+    <div class="bounty">
+        <% ACusers.forEach((user) =>{%>
+        <div>
+            <form action="/changebounty" method="post">
+                <div>
+                    <img src="images/<%= user.image %>" alt="Wanted Person">
+                    <br>
+                    <br>
+                    <h3><%= user.username %></h3>
+                    <div class="adminsubmit">
+                        <input type="text" name="bountyID" value="<%= user.bountyID %>" style="display: none;">
+                        <input type="text" name="price" value="<%= user.price %>" >
+                        <input type="submit" value="Change bounty">
+                    </div>
+                </div>
+            </form>
+            <form action="/deletebounty" method="post">
+                <div class="adminsubmit">
+                    <input type="text" name="bountyID"  value="<%= user.bountyID %>" style="display: none;">
+                    <input type="submit" value="Delete Bounty">
+                </div>
+            </form>
+        </div>
+        <% }) %>
+    </div>
+    <form action="/deleteAllBounty" method="post" style="width: min(800px, 90%);">
+        <div class="adminsubmit" style="width: min(800px, 100%);">
+            <input type="submit" value="Delete all">
+        </div>
+    </form>
+</main>
+
+<%- include("partials/footer") %>

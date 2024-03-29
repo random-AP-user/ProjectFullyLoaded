@@ -1,0 +1,24 @@
+<%- include("partials/specialheader") %>    
+<div class="containerform">
+<form class="loginform" action="/registeruser" method="post" enctype="multipart/form-data">
+    <h3>Register Here</h3>
+    
+    <label for="username">Username</label>
+    <input type="text" placeholder="Username" name="username" required>
+    
+    <label for="password">Password</label>
+    <input type="password" placeholder="Password" name="password" required>
+
+    <label for="password">Verify password</label>
+    <input type="password" placeholder="Password" name="verifypassword" required>
+
+    <label for="productImage">Foto (moet herkenbaar zijn tijdens event)</label>
+    <div style="display: grid; align-items: center;">
+        <input type="file" name="userimage" style="height: 100%; text-align: center; width: auto; padding-top: 10px;" required>
+    </div>
+    <div id="btncontainer">
+        <button style="color: black;">Register</button>
+        <a class="link" href="/">Home</a>
+    </div>
+</form>
+</div>

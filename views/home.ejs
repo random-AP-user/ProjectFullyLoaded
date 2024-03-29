@@ -1,0 +1,77 @@
+<%- include("partials/header") %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+<body onload="onload()">
+    <header>
+        <a class="link" href="/profile" style="width: 100px; padding: 5px 10px;">Profile</a>
+        <h1 style="text-align: center;">No Man's Land Event</h1>
+        <div>
+            <% if(admin == 1) { %>
+                <a class="link" href="/admin" style="width: 100px; padding: 5px 10px;">Admin</a>
+            <% } %>
+            <% if(typeof username !== 'undefined'){ %>
+                <a class="link" href="/logout" style="width: 100px; padding: 5px 10px;">Log&nbsp;out</a>
+            <% } else{ %>
+                <span></span>
+                <a class="link" href="/login" style="width: 100px; padding: 5px 10px;">Login</a>
+            <% } %>
+        </div>
+    </header>
+    <main>
+        <div class="carousel">
+            <div class="slide" style="background-image: url('images/banner.webp'); opacity: 1;"></div>
+            <div class="slide" style="background-image: url('images/banner2.webp');"></div>
+        </div>
+        <h1 id="bountytitle">Bounty's</h1>
+        <hr>
+        <div id="bountyContainer" class="bounty">
+            <% if(users[0] == undefined){ %>
+                <div id="quotes">
+                    <h2 id="wildWestQuote"></h2>
+                </div>
+            <% } else { users.forEach((user) =>{ %>
+                <form action="/claim" method="post">
+                    <div>
+                        <img src="images/<%= user.image %>" alt="Wanted Person">
+                        <br>
+                        <br>
+                        <h3><%= user.username %></h3>
+                        <p>৳<%=user.price %></p>
+                        <button class="bountytd link">Claim Bounty</button>
+                    </div>
+                </form>
+            <% })} %>
+            
+        </div>
+        <div class="userlistbtn">
+            <a href="/userslist" class="link">Users list</a>
+        </div>
+        <hr>
+        <div class="mapouter" style="width: 60%; ">
+            <div class="gmap_canvas ">
+                <h2>Location</h2>
+                <iframe width="100%" height="100%" id="gmap_canvas" src="https://maps.google.com/maps?q=Doorniksesteenweg+581%2C+8583+Avelgem&t=k&z=16&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+            </div>
+        </div>
+        <hr>
+    </main>
+    <footer>
+        
+        <div class="footerbtn">
+            <div>
+                <a class="link" id="notifyButton">Test Notification</a>
+                <a class="link" href="https://www.consilium.europa.eu/en/press/press-releases/2023/11/27/data-act-council-adopts-new-law-on-fair-access-to-and-use-of-data/">Disclaimer</a>
+            </div>
+            <p>active users: <span id="userCountContainer">1</span></p>
+        </div>
+        <div id="dev">
+            <p>Developer: Noah</p>
+        </div>
+        <div>
+            <p>Hosted on: <a style="color: #fff; text-decoration: underline;" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT27aVZIRY4jl7se3hqYoVPBRRp9F1_U1Jb1iEyubfDhg&s">VM200X</a></p>
+        </div>
+    </footer>
+    <script src="js/randomtext.js"></script>
+    <script src="js/socketIO.js"></script>
+    <script src="./client.js"></script>
+</body>
+<%- include("partials/footer") %>

@@ -1,0 +1,33 @@
+<%- include("partials/header") %>
+<header>
+    
+    <a class="link" href="/profile" style="width: 100px; padding: 5px 10px;">Profile</a>
+
+    <h1 style="text-align: center;">Fully&nbsp;loaded Bounty's</h1>
+    <div>
+        <a class="link" href="/" style="width: 100px; padding: 5px 10px;">home</a>
+    <% if(typeof username !== 'undefined'){ %>
+        <a class="link" href="/logout" style="width: 100px; padding: 5px 10px;">Log out</a>
+        <% } else{%>
+            <a class="link" href="/login" style="width: 100px; padding: 5px 10px;">Login</a>
+    <% } %>
+    </div>
+</header>
+<main>
+    <h1 id="bountytitle" >Registered users</h1>
+    <hr>
+    <!-- goes in and out of bounty dont overthink it -->
+    <div class="bounty">
+        <% users.forEach((user , i) =>{%>
+            <div>
+                <img src="images/<%= user.image %>" alt="image of <%= user.username %>">
+                <br>
+                <br>
+                <h3><%= user.username %></h3>
+                <p><%= user.price %></p>
+            </div>
+        <% }) %>
+    </div>  
+</main>
+
+<%- include("partials/footer") %>
