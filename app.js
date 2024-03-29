@@ -1,5 +1,6 @@
 const os = require('os');
 const fs = require('fs');
+const https = require("https");
 const express = require("express");
 const session = require("express-session");
 const multer = require("multer");
@@ -15,18 +16,24 @@ const webpush = require("web-push");
 dotenv.config({ path: './.env' });
 
 const app = express();
-const server = require("http").createServer(app);
-const io = require("socket.io")(server);
 
+const sslServer = https.createServer(
+  {
+    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+  },app
+);
+
+const io = require("socket.io")(sslServer);
 // too many hours wasted 
 // todo
-  //! video upload
-  //? change image
-  //? change password
-  //? list of players
-  //?// active count
-  //?// delete all active bounty's
-  //!// push notification
+//! video upload
+//? change image
+//? change password
+//? list of players
+//?// active count
+//?// delete all active bounty's
+//!// push notification
 
 
 
@@ -68,7 +75,7 @@ app.use(bodyParser.json());
 // Middleware for session management
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  cookie: {maxAge : 24 * 60 * 60 * 1000},
+  cookie: { maxAge: 24 * 60 * 60 * 1000 },
   saveUninitialized: true,
   resave: true,
 }));
@@ -88,7 +95,7 @@ app.get("/", (req, res) => {
   q = "SELECT u.username, u.image, b.price FROM users u LEFT JOIN bounty b ON u.userID = b.userID WHERE u.userID = b.userID ORDER BY b.price DESC";
   db.query(q, (err, rows, field) => {
     if (err) throw err;
-    res.render("home.ejs", { users: rows, username: req.session.username, admin : req.session.admin});
+    res.render("home.ejs", { users: rows, username: req.session.username, admin: req.session.admin });
   });
 });
 
@@ -128,24 +135,24 @@ app.post("/loginuser", async (req, res) => {
         req.session.admin = rows[0].admin;
         res.redirect("/");
       } else {
-        res.redirect("/login")
+        res.redirect("/login");
       }
     } else {
-      res.redirect("/login")
+      res.redirect("/login");
     }
   });
 });
 
-app.get('/profile', (req, res) =>{
-  if(req.session.username == undefined){
-    res.redirect("/login")
-  }else{
-    q = "SELECT secretcode , price FROM bounty b WHERE userID = (SELECT userID FROM users u WHERE userID = ?)"
-    db.query(q, [req.session.userID], (err, rows, field) =>{
-      res.render('profile.ejs', {username : req.session.username, image : req.session.image, id : req.session.userID, query : rows[0]})
-    })
+app.get('/profile', (req, res) => {
+  if (req.session.username == undefined) {
+    res.redirect("/login");
+  } else {
+    q = "SELECT secretcode , price FROM bounty b WHERE userID = (SELECT userID FROM users u WHERE userID = ?)";
+    db.query(q, [req.session.userID], (err, rows, field) => {
+      res.render('profile.ejs', { username: req.session.username, image: req.session.image, id: req.session.userID, query: rows[0] });
+    });
   }
-})
+});
 
 app.use('/profile', express.static('./public/images'));
 
@@ -193,71 +200,71 @@ app.post("/registeruser", upload.single('userimage'), (req, res) => {
 });
 
 
-app.post("/claim", (req, res) =>{
-  if(req.session.username == undefined){
-    res.redirect("/login")
-  }else{
-    res.render("claimbounty.ejs")
+app.post("/claim", (req, res) => {
+  if (req.session.username == undefined) {
+    res.redirect("/login");
+  } else {
+    res.render("claimbounty.ejs");
   }
-})
+});
 
 app.post("/clameconfirm", (req, res) => {
-  if(req.session.username == undefined){
-    res.redirect("/login")
-  } else{
+  if (req.session.username == undefined) {
+    res.redirect("/login");
+  } else {
     const bountypass = req.body.bountypass;
     q = "SELECT * FROM `bounty` WHERE secretcode = ?";
     db.query(q, [bountypass], (err, rows, fields) => {
-        if(err) throw err
-        const userID = req.session.userID;
-        const killedID = rows[0].userID;
-        const price = rows[0].price;
-        const bountyID = rows[0].bountyID
-        if (rows.length > 0 && userID != killedID) {
-            q2 = "INSERT INTO collectedbounty (userID, killedID, price) VALUES (?, ?, ?);";
-            db.query(q2, [userID, killedID, price], (err, rows, fields) => {
-                q3 = "DELETE FROM bounty WHERE bountyID = ?"
-                db.query(q3, [bountyID], (err, rows, fields) => {
-                  if(err) throw err
-                  io.sockets.emit("bountyUpdate");
-                  res.redirect("/");
-                })
-            });
-            
-        } else {
-            console.log("no");
-            res.render("claimbounty.ejs");
-        }
+      if (err) throw err;
+      const userID = req.session.userID;
+      const killedID = rows[0].userID;
+      const price = rows[0].price;
+      const bountyID = rows[0].bountyID;
+      if (rows.length > 0 && userID != killedID) {
+        q2 = "INSERT INTO collectedbounty (userID, killedID, price) VALUES (?, ?, ?);";
+        db.query(q2, [userID, killedID, price], (err, rows, fields) => {
+          q3 = "DELETE FROM bounty WHERE bountyID = ?";
+          db.query(q3, [bountyID], (err, rows, fields) => {
+            if (err) throw err;
+            io.sockets.emit("bountyUpdate");
+            res.redirect("/");
+          });
+        });
+
+      } else {
+        console.log("no");
+        res.render("claimbounty.ejs");
+      }
     });
   }
 });
 
 app.get("/collected", (req, res) => {
-  if(req.session.userID == undefined){
-    res.redirect("/login")
-  }else{
-    userID = req.session.userID
-    q = "SELECT price, (SELECT username FROM users u WHERE u.userID = c.killedID ) AS victim FROM collectedbounty c WHERE c.userID = ? AND collected = 0;"
-    db.query(q, [userID], (err,rows,fields) =>{
-      q2 = "SELECT price, (SELECT username FROM users u WHERE u.userID = c.killedID ) AS victim FROM collectedbounty c WHERE c.userID = ? AND collected = 1;"
-      db.query(q2, [userID], (err2,rows2,fields2) =>{
-        res.render("collectedbounty.ejs", { notcollected : rows, iscollected : rows2})
-      })
-    })
+  if (req.session.userID == undefined) {
+    res.redirect("/login");
+  } else {
+    userID = req.session.userID;
+    q = "SELECT price, (SELECT username FROM users u WHERE u.userID = c.killedID ) AS victim FROM collectedbounty c WHERE c.userID = ? AND collected = 0;";
+    db.query(q, [userID], (err, rows, fields) => {
+      q2 = "SELECT price, (SELECT username FROM users u WHERE u.userID = c.killedID ) AS victim FROM collectedbounty c WHERE c.userID = ? AND collected = 1;";
+      db.query(q2, [userID], (err2, rows2, fields2) => {
+        res.render("collectedbounty.ejs", { notcollected: rows, iscollected: rows2 });
+      });
+    });
   }
-})
+});
 
 app.post("/addbounty", (req, res) => {
   const userID = req.body.userID;
   const price = req.body.price;
-  
-  q = "select username, image from users where userID = ?"
-  db.query(q, [userID], (err, row, field) =>{
+
+  q = "select username, image from users where userID = ?";
+  db.query(q, [userID], (err, row, field) => {
     message = `Bounty on ${row[0].username}\nReward: ৳${req.body.price}`;
-    fullUrl = `${req.protocol}://${req.get('host')}/images/`
-    icon = `${fullUrl}${row[0].image}`
+    fullUrl = `${req.protocol}://${req.get('host')}/images/`;
+    icon = `${fullUrl}${row[0].image}`;
     //? if future me forgets the DUAL creates an empty row and column tldr DUAL = (select 1)
-    const number = Math.floor(Math.random()*10001);
+    const number = Math.floor(Math.random() * 10001);
     q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, LPAD(FLOOR(RAND() * 10000), 4));";
     db.query(q2, [userID, price], (err2, row2, field2) => {
       if (err) throw err;
@@ -266,17 +273,17 @@ app.post("/addbounty", (req, res) => {
       res.redirect("/admin");
     });
   });
-})
-app.post("/changebounty", (req,res) => {
-  const bountyID = req.body.bountyID
-  const price = req.body.price
-  q="UPDATE bounty SET price = ? WHERE bountyID = ?"
-  db.query(q, [price, bountyID], (err, row,field) => {
-    if(err) throw err
+});
+app.post("/changebounty", (req, res) => {
+  const bountyID = req.body.bountyID;
+  const price = req.body.price;
+  q = "UPDATE bounty SET price = ? WHERE bountyID = ?";
+  db.query(q, [price, bountyID], (err, row, field) => {
+    if (err) throw err;
     io.sockets.emit("bountyUpdate");
-    res.redirect("/admin")
-  })
-})
+    res.redirect("/admin");
+  });
+});
 
 app.post("/deletebounty", (req, res) => {
   const bountyID = req.body.bountyID;
@@ -299,10 +306,10 @@ app.post("/deleteAllBounty", (req, res) => {
 });
 
 
-app.get("/admin", (req, res) =>{
-  if(req.session.admin != 1){
-    res.redirect("/")
-  }else{
+app.get("/admin", (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
     q1 = "SELECT u.userID, u.username, u.image FROM users u WHERE u.userID NOT IN (SELECT b.userID FROM bounty b);";
     db.query(q1, (err1, rows1, fields1) => {
       if (err1) {
@@ -313,12 +320,12 @@ app.get("/admin", (req, res) =>{
         if (err2) {
           throw err2;
         }
-        
+
         res.render("admin.ejs", { AVusers: rows1, ACusers: rows2, username: req.session.username });
       });
-    }); 
+    });
   }
-})
+});
 
 app.get("/getUpdatedBounties", (req, res) => {
   q = "SELECT u.username, u.image, b.price FROM users u LEFT JOIN bounty b ON u.userID = b.userID WHERE u.userID = b.userID ORDER BY b.price DESC";
@@ -333,26 +340,26 @@ app.get("/getUpdatedBounties", (req, res) => {
   });
 });
 
-app.get("/userslist", (req, res) =>{
-  q = "SELECT username, image FROM users ORDER BY username"
-  db.query(q, (err, rows, fields) =>{
+app.get("/userslist", (req, res) => {
+  q = "SELECT username, image FROM users ORDER BY username";
+  db.query(q, (err, rows, fields) => {
     if (err) {
       throw err;
     }
-    res.render("userslist.ejs", {users: rows})
-  })
-})
+    res.render("userslist.ejs", { users: rows });
+  });
+});
 
 // active users
-function test(){
-  io.sockets.emit("activeUsers")
+function test() {
+  io.sockets.emit("activeUsers");
 }
-app.get("/refreshUsers", (req,res) =>{
-  activeUsers = io.engine.clientsCount
-  res.json({ activeUsers : activeUsers });
-})
+app.get("/refreshUsers", (req, res) => {
+  activeUsers = io.engine.clientsCount;
+  res.json({ activeUsers: activeUsers });
+});
 
-setInterval(test, 2000)
+setInterval(test, 2000);
 
 // web push notif
 
@@ -365,52 +372,52 @@ webpush.setVapidDetails(
   privateVapidKey
 );
 
-app.get("/test", (req, res) =>{
+app.get("/test", (req, res) => {
   title = "ALERT: New Bounty";
   message = `Bounty on ${req.session.username}\nReward: $200`;
-  fullUrl = `${req.protocol}://${req.get('host')}/images/`
-  icon = `${fullUrl}${req.session.image}`
+  fullUrl = `${req.protocol}://${req.get('host')}/images/`;
+  icon = `${fullUrl}${req.session.image}`;
   sendPushNotification(title, message, icon);
   res.render("test.ejs");
-})
+});
 
 app.post("/subscribe", async (req, res) => {
   try {
-      const subscription = req.body;
-      subscribers.push(subscription);
-      
-      fs.writeFileSync("./subscribers.json", JSON.stringify(subscribers));
+    const subscription = req.body;
+    subscribers.push(subscription);
 
-      res.status(201).send("Subscription Saved");
+    fs.writeFileSync("./subscribers.json", JSON.stringify(subscribers));
+
+    res.status(201).send("Subscription Saved");
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 });
 
-const subscribers = require("./subscribers.json")
+const subscribers = require("./subscribers.json");
 async function sendPushNotification(title, message, icon) {
   for (let i = 0; i < subscribers.length; i++) {
-      const subscription = subscribers[i];
-      const payload = {
-          title: title,
-          body: message,
-          icon: icon,
-      };
+    const subscription = subscribers[i];
+    const payload = {
+      title: title,
+      body: message,
+      icon: icon,
+    };
 
-      try {
-          await webpush.sendNotification(subscription, JSON.stringify(payload));
-      } catch (error) {
-          if (error.statusCode === 410) {
-              console.log("Subscription is no longer valid, remove it from your list \n" + JSON.stringify(subscription));
-              subscribers.splice(i, 1);
-              i--;
-          } else {
-              console.error("Error sending notification:", error);
-          }
+    try {
+      await webpush.sendNotification(subscription, JSON.stringify(payload));
+    } catch (error) {
+      if (error.statusCode === 410) {
+        console.log("Subscription is no longer valid, remove it from your list \n" + JSON.stringify(subscription));
+        subscribers.splice(i, 1);
+        i--;
+      } else {
+        console.error("Error sending notification:", error);
       }
+    }
   }
   fs.writeFileSync("./subscribers.json", JSON.stringify(subscribers, null, 2));
-  console.log("finnished sending all notification")
+  console.log("finnished sending all notification");
 }
 
 
@@ -444,6 +451,6 @@ port = 3000;
 // ipwifi = getIPAddress();
 ipwifi = "192.168.0.166";
 
-server.listen(port, ipwifi, () => {
-  console.log(`Server is running on http://${ipwifi}:${port}`);
+sslServer.listen(port, ipwifi, () => {
+  console.log(`Server is running on https://${ipwifi}:${port}`);
 });
