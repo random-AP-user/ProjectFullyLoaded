@@ -447,9 +447,9 @@ function getIPAddress() {
 // outbound = port 80
 //ipethernet = "192.168.0.166";
 
-port = 3000;
+port = process.env.PORT || 3000;
 // ipwifi = getIPAddress();
-ipwifi = "192.168.0.166";
+ipwifi = "127.0.0.1";
 
 sslServer.listen(port, ipwifi, () => {
   console.log(`Server is running on https://${ipwifi}:${port}`);
