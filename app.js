@@ -446,6 +446,6 @@ port = process.env.PORT || 3000;
 // ipwifi = getIPAddress();
 ipwifi = "127.0.0.1";
 
-sslServer.listen(port, ipwifi, () => {
+sslServer.listen(port, () => {
   console.log(`Server is running on https://${ipwifi}:${port}`);
 });
