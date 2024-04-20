@@ -442,7 +442,7 @@ function getIPAddress() {
 // outbound = port 80
 //ipethernet = "192.168.0.166";
 
-port = process.env.PORT || 3000;
+port = process.env.PORT || 10000;
 // ipwifi = getIPAddress();
 ipwifi = "127.0.0.1";
 
