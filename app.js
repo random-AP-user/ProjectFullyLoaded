@@ -84,13 +84,8 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error destroying session:", err);
-      return res.redirect("/");
-    }
-    res.redirect("/");
-  });
+  req.session = null;
+  res.redirect("/");
 });
 
 app.post("/loginuser", async (req, res) => {
