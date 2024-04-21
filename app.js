@@ -229,15 +229,15 @@ app.post("/addbounty", (req, res) => {
 
   q = "select username, image from users where userID = ?";
   db.query(q, [userID], (err, row) => {
-    message = `Bounty on ${row[0].username}\nReward: ৳${req.body.price}`;
-    fullUrl = `${req.protocol}://${req.get('host')}/images/`;
-    icon = `${fullUrl}${row[0].image}`;
+    // message = `Bounty on ${row[0].username}\nReward: ৳${req.body.price}`;
+    // fullUrl = `${req.protocol}://${req.get('host')}/images/`;
+    // icon = `${fullUrl}${row[0].image}`;
     const number = Math.floor(Math.random() * 10001);
     q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, LPAD(FLOOR(RAND() * 10000), 4));";
     db.query(q2, [userID, price], (err2, row2) => {
       if (err) throw err;
       io.sockets.emit("bountyUpdate");
-      sendPushNotification("ALERT: New Bounty", message, icon);
+      // sendPushNotification("ALERT: New Bounty", message, icon);
       res.redirect("/admin");
     });
   });
