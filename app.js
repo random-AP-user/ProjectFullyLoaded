@@ -232,13 +232,14 @@ app.post("/addbounty", (req, res) => {
 
   q = "select username, image from users where userID = ?";
   db.query(q, [userID], (err, row) => {
+    if (err) throw err;
     message = `Bounty on ${row[0].username}\nReward: ৳${req.body.price}`;
     fullUrl = `${req.protocol}://${req.get('host')}/images/`;
     icon = `${fullUrl}${row[0].image}`;
     const number = Math.floor(Math.random() * 10001);
-    q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, formattedRandomNumber);";
-    db.query(q2, [userID, price], (err2, row2) => {
-      if (err) throw err;
+    q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, ?);";
+    db.query(q2, [userID, price, formattedRandomNumber], (err2, row2) => {
+      if (err2) throw err2;
       io.sockets.emit("bountyUpdate");
       sendPushNotification("ALERT: New Bounty", message, icon);
       res.redirect("/admin");
