@@ -236,7 +236,7 @@ app.post("/addbounty", (req, res) => {
     q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, LPAD(FLOOR(RAND() * 10000), 4));";
     db.query(q2, [userID, price], (err2, row2) => {
       if (err) throw err;
-      io.sockets.emit("bountyUpdate");
+      // io.sockets.emit("bountyUpdate");
       // sendPushNotification("ALERT: New Bounty", message, icon);
       res.redirect("/admin");
     });
