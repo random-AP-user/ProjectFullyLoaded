@@ -299,6 +299,57 @@ app.get("/admin", (req, res) => {
   }
 });
 
+app.get("/users", (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
+    q = "SELECT * from users";
+    db.query(q, (err, row) => {
+      if (err) throw err;
+      res.render("users.ejs", {username: req.session.username, users: row });
+    });
+  }
+});
+
+app.post("/edituser", upload.single('userimage'), (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
+    const userID = req.body.userID;
+    const username = req.body.username;
+    let userimage = req.body.oldimagename;
+    console.log('userimage', userimage);
+    if (req.file) {
+      userimage = req.file.filename;
+    }
+    if (req.body.password == "") {
+      const oldpassword = req.body.oldpassword;
+      q = "UPDATE users SET username = ?, password = ?, image = ? WHERE userID = ?";
+      db.query(q, [username, oldpassword, userimage, userID], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+      });
+    } else {
+      const password = req.body.password;
+      bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+        if (hashErr) {
+          throw hashErr;
+        }
+        console.log(hashedPassword);
+        console.log(req.body.oldpassword);
+        q = "UPDATE users SET username = ?, password = ?, image = ? WHERE userID = ?";
+        db.query(q, [username, hashedPassword, userimage, userID], (err, rows) => {
+          if (err) {
+            throw err;
+          }
+        });
+      });
+    }
+    res.redirect("/users");
+  }
+});
+
 app.get("/getUpdatedBounties", (req, res) => {
   q = "SELECT u.username, u.image, b.price FROM users u LEFT JOIN bounty b ON u.userID = b.userID WHERE u.userID = b.userID ORDER BY b.price DESC";
   db.query(q, (err, rows) => {
@@ -399,7 +450,7 @@ function getIPAddress() {
   return '0.0.0.0';
 }
 
-port = process.env.PORT || 10000 ;
+port = process.env.PORT || 10000;
 ipwifi = "127.0.0.1";
 
 server.listen(port, () => {

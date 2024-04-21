@@ -3,7 +3,7 @@
     
     <a class="link" href="/profile" style="width: 100px; padding: 5px 10px;">Profile</a>
 
-    <h1 style="text-align: center;">Fully&nbsp;loaded Bounty's</h1>
+    <h1 style="text-align: center;">No Man's Land</h1>
     <div>
         <a class="link" href="/" style="width: 100px; padding: 5px 10px;">home</a>
     <% if(typeof username !== 'undefined'){ %>
@@ -14,12 +14,16 @@
     </div>
 </header>
 <main>
-    <h1 id="bountytitle" >Registered users</h1>
+    <div id="editusers" style="width: min(500px, 90%); display: grid; place-items: center;">
+        <div style="display: grid;">
+        </div>
+        <h1 id="bountytitle" style="margin-bottom: 0;">Registered Users</h1>
+        <input type="text" id="searchInputUsers" oninput="searchUsers('users')" placeholder="Search registered users">
+    </div>
     <hr>
-    <!-- goes in and out of bounty dont overthink it -->
     <div class="bounty">
         <% users.forEach((user , i) =>{%>
-            <div>
+            <div class="user">
                 <img src="images/<%= user.image %>" alt="image of <%= user.username %>">
                 <br>
                 <br>
@@ -31,3 +35,23 @@
 </main>
 
 <%- include("partials/footer") %>
+
+<script>
+    function searchUsers(type) {
+        var input, filter, userList, userDiv, username, i, txtValue;
+        input = document.getElementById('searchInput' + type.charAt(0).toUpperCase() + type.slice(1)); // Capitalize type
+        filter = input.value.toUpperCase();
+        userList = document.getElementsByClassName('bounty')[0]; // Assume only one bounty section
+        userDiv = userList.getElementsByClassName('user');
+
+        for (i = 0; i < userDiv.length; i++) {
+            username = userDiv[i].querySelector('h3');
+            txtValue = username.textContent || username.innerText;
+            if (txtValue.toUpperCase().includes(filter)) {
+                userDiv[i].style.display = "";
+            } else {
+                userDiv[i].style.display = "none";
+            }
+        }
+    }
+</script>

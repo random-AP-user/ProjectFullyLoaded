@@ -3,39 +3,37 @@
     <body>
         <div class="containerform">
             <div class="loginform">
-                <h1 class="lining">Claim these bounty's</h1>
-                <% if(notcollected == undefined){ %>
-                    <div style="padding: 20px 0;">
-                        <h2>How did you not kill a single person yet?</h2>
-                    </div>
-                    <% } else { 
-                        notcollected.forEach((notcol) =>{ %>
+                <h1 class="lining" style="text-align: center;">Claim these bounty's</h1>
+                <div style="min-height: 200px;">
+                    <% notcollected.forEach((notcol) =>{ %>
                             <div style="padding-bottom: 10px;">
                                 <img src="../images/<%= notcol.image %>" alt="" width="100%">
                                 <h4>Victim name: <%= notcol.victim %></h4>
                                 <h4>price: ৳<%= notcol.price %></h4>
-                            </div>  
+                            </div>
                             <% total = notcol.price + total %>
                         <% }) %>
-                        <h4 style="padding-bottom: 10px;">Total uncollected: ৳<%= total %></h4>
-                        <h3 class="lining">Bounty history</h3>
-                        <% total2 = total%>
-                        <% if(iscollected == undefined){ %>
+                </div>
+                <h4 style="padding-bottom: 10px;">Total uncollected: ৳<%= total %></h4>
+                <h3 class="lining">Bounty history</h3>
+                <div style="min-height: 200px;">
+                <% total2 = total%>
+                <% if(iscollected == undefined){ %>
                             <div style="padding-top: 20px; text-align: center;">
                             <h2>No previous bounty's</h2>
                             </div>
-                        <% } else{ 
+                        <% } else{
                             iscollected.forEach((iscol) =>{ %>
                             <div style="padding-bottom: 10px;">
                                 <img src="../images/<%= iscol.image %>" alt="" width="100%">
                                 <h4>Victim name: <%= iscol.victim %></h4>
                                 <h4>price: ৳<%= iscol.price %></h4>
-                            </div>  
+                            </div>
                             <% total2 = iscol.price + total2 %>
                         <% }) %>
+                        </div>
                         <h4 style="padding-bottom: 10px;">Complete total: ৳<%= total2 %></h4>
-                        <% } %>    
-                    <% } %>                   
+                        <% } %>
                 <a class="link profilehome" href="/">Home</a>
             </div>
         </div>

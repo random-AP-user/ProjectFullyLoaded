@@ -1,0 +1,89 @@
+<%- include("partials/header") %>
+    <header style="margin: 0;">
+        <a class="link" href="/profile" style="width: 100px; padding: 5px 10px;">Profile</a>
+        <h1 style="text-align: center;">No Man's Land</h1>
+        <div>
+            <a class="link" href="/" style="width: 100px; padding: 5px 10px;">home</a>
+            <% if(typeof username !=='undefined' ){ %>
+                <a class="link" href="/logout" style="width: 100px; padding: 5px 10px;">Log out</a>
+                <% } else{ %>
+                    <a class="link" href="/login" style="width: 100px; padding: 5px 10px;">Login</a>
+                    <% } %>
+        </div>
+    </header>
+    <main>
+        <div id="editusers" style="width: min(500px, 90%); display: grid; place-items: center;">
+            <a class="link" href="/admin" style="width: 100%; padding: 5px 10px;">Admin panel</a>
+            <h1 id="bountytitle" style="margin-bottom: 0;">All users</h1>
+            <p style="color: red; text-align: center; ">(you are in a dangerous place be careful in what you change)</p>
+
+            <input type="text" id="searchInput" oninput="searchUsers()" placeholder="Search users">
+        </div>
+        <hr>
+        <div id="userList" class="bounty" style="min-height: 200px;">
+            <% users.forEach((user)=> { %>
+                <div class="user">
+                    <form action="/edituser" method="post" enctype="multipart/form-data">
+                        <div>
+                            <img src="images/<%= user.image %>" alt="Wanted Person">
+                            <br>
+                            <br>
+                            <div class="adminsubmit">
+                                <input type="text" name="oldimagename" value="<%= user.image %>" style="display: none;">
+                                <input type="text" name="userID" value="<%= user.userID %>" style="display: none;">
+                                <input type="text" name="username" value="<%= user.username %>">
+                                <input type="text" name="oldpassword" value="<%= user.password %>"
+                                    style="display: none;">
+                                <input type="password" name="password" value="" placeholder="New password">
+                                <div class="inputfile-box">
+                                    <input type="file" name="userimage" id="file" class="inputfile"
+                                        onchange='uploadFile(this)'>
+                                    <label for="file">
+                                        <span id="file-name" class="file-box"></span>
+                                        <span class="file-button">
+                                            <i class="fa fa-upload" aria-hidden="true"></i>
+                                            Select File
+                                        </span>
+                                    </label>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 20% 1fr;">
+                                    <input type="checkbox" name="verify" required>
+                                    <input type="submit" value="Save changes" style="color: white;">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form action="/deletebounty" method="post">
+                        <div class="adminsubmit">
+                            <input type="text" name="bountyID" value="<%= user.bountyID %>" style="display: none;">
+                            <div style="display: grid; grid-template-columns: 20% 1fr;">
+                                <input type="checkbox" name="verify" required>
+                                <input type="submit" value="DELETE USER" style="color: white;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <% }); %>
+        </div>
+    </main>
+
+    <script>
+        function searchUsers() {
+            var input, filter, userList, userDiv, username, i, txtValue;
+            input = document.getElementById('searchInput');
+            filter = input.value.toUpperCase();
+            userList = document.getElementById('userList');
+            userDiv = userList.getElementsByClassName('user');
+
+            for (i = 0; i < userDiv.length; i++) {
+                username = userDiv[i].querySelector('[name="username"]');
+                txtValue = username.value || username.textContent || username.innerText;
+                if (txtValue.toUpperCase().includes(filter)) {
+                    userDiv[i].style.display = "";
+                } else {
+                    userDiv[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+    <%- include("partials/footer") %>

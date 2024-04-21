@@ -309,11 +309,44 @@ hr{
     margin: 25px 0;
 }
 
+.inputfile-box {
+    position: relative;
+  }
+  
+  .inputfile {
+    display: none;
+  }
+  
+  .container {
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .file-box {
+    display: inline-block;
+    width: 100%;
+    border: 1px solid;
+    padding: 5px 0px 5px 5px;
+    box-sizing: border-box;
+    height: calc(2rem - 1px);
+    text-align: left;
+  }
+  
+  .file-button {
+    background: #080710;
+    padding: 5px;
+    position: absolute;
+    border: 1px solid;
+    top: 0px;
+    right: 0px;
+  }
+
 
 @media (max-width:950px) {
     
     .bounty{
         grid-template-columns: repeat(3, 1fr);
+        width: 90%;
     }
     #search{
         grid-template-columns: 1fr;
@@ -327,7 +360,7 @@ hr{
     }
     header{
         grid-template-columns: repeat(3,1fr);
-        margin-bottom: 20px;
+        margin-bottom: 20px !important;
     }
     header > *:nth-child(1){
         grid-column: 1/3;
@@ -354,6 +387,7 @@ hr{
     header{
         grid-template-columns: 1fr;
         width: 100%;
+        margin-bottom: 0px !important;
     }
     header > h1{
         grid-column: 1/2;
