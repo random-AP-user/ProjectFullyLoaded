@@ -1,40 +1,44 @@
-*,*:before, *:after {
-    box-sizing: inherit; margin: 0; 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    
-}
 *,
 *:before,
-*:after{
+*:after {
+    box-sizing: inherit;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+*,
+*:before,
+*:after {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     background-color: #080710;
     color: #eaf0fb;
 }
-body{
+
+body {
     overflow-x: hidden;
 }
-body::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #080710;
+
+body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #080710;
 }
 
-body::-webkit-scrollbar
-{
-	width: 12px;
-	background-color: #080710;
+body::-webkit-scrollbar {
+    width: 12px;
+    background-color: #080710;
 }
 
-body::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px 080710;
-	background-color: #F5F5F5;
+body::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px 080710;
+    background-color: #F5F5F5;
 }
 
 .carousel {
@@ -43,6 +47,7 @@ body::-webkit-scrollbar-thumb
     height: 30vh;
     position: relative;
 }
+
 .slide {
     position: absolute;
     top: 0;
@@ -57,123 +62,136 @@ body::-webkit-scrollbar-thumb
     opacity: 0;
     transition: opacity 2s ease-in-out;
 }
-.slide:nth-child(1){
+
+.slide:nth-child(1) {
     background-position: left 30% top 30%;
 }
-.slide:nth-child(2){
+
+.slide:nth-child(2) {
     background-position: center;
 }
-header{
+
+header {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr ;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     place-items: center;
-    gap:  0 20px;
+    gap: 0 20px;
 }
-header div{
+
+header div {
     height: fit-content;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
-header h1{
+
+header h1 {
     grid-column: 2/4;
 }
-header a:nth-child(1){
+
+header a:nth-child(1) {
     grid-column: 1/2;
 }
-header a:nth-child(3){
+
+header a:nth-child(3) {
     grid-column: 4/5;
 }
 
-.bounty{
+.bounty {
     display: grid;
     gap: 20px;
     width: 60%;
     grid-template-columns: repeat(5, 1fr);
     text-align: center;
 }
-.bounty div img{
+
+.bounty div img {
     aspect-ratio: 1/1;
     width: 100%;
 }
 
-.bounty div{
+.bounty div {
     width: 100%;
 }
 
-#quotes{
-    display: grid; 
-    grid-column: 1/7; 
-    min-height: 40vh; 
-    place-items: center; 
+#quotes {
+    display: grid;
+    grid-column: 1/7;
+    min-height: 40vh;
+    place-items: center;
     text-align: center;
 }
 
-#search{
-    display: grid; 
+#search {
+    display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-column: 2/4 ;
+    grid-column: 2/4;
     gap: 1rem;
     grid-row: 2/3;
     width: 100%;
 }
-#search > *, .adminsubmit > *{
+
+#search>*,
+.adminsubmit>* {
     color: #fff;
 }
-.adminsubmit > *{
+
+.adminsubmit>* {
     margin-bottom: 20px;
 }
 
-.containerform{
+.containerform {
     display: grid;
     place-items: center;
     width: 100%;
     min-height: 100vh;
     padding: 10px 0;
 }
-.loginform{
+
+.loginform {
     height: fit-content;
     width: min(420px, 90%);
-    background-color: rgba(255,255,255,0.13);
+    background-color: rgba(255, 255, 255, 0.13);
     border-radius: 10px;
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255,255,255,0.1);
-    box-shadow: 0 0 40px rgba(8,7,16,0.6);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
     padding: 50px 35px;
 }
 
-.loginform *{
-    font-family: 'Poppins',sans-serif;
+.loginform * {
+    font-family: 'Poppins', sans-serif;
     color: #ffffff;
     letter-spacing: 0.5px;
     outline: none;
     border: none;
 }
 
-.loginform h3{
+.loginform h3 {
     font-size: 32px;
     font-weight: 500;
     line-height: 42px;
     text-align: center;
 }
 
-.loginform h4{
+.loginform h4 {
     font-size: 1rem;
     line-height: 1.5rem;
     text-align: center;
 }
 
-label{
+label {
     display: block;
     margin-top: 30px;
     font-size: 16px;
     font-weight: 500;
 }
-input{
+
+input {
     display: block;
     height: 40px;
     width: 100%;
-    background-color: rgba(255,255,255,0.07);
+    background-color: rgba(255, 255, 255, 0.07);
     border-radius: 3px;
     padding: 0 10px;
     margin-top: 8px;
@@ -181,11 +199,14 @@ input{
     font-weight: 300;
 }
 
-::placeholder{
+::placeholder {
     color: #e5e5e5;
 }
 
-button, a.link, .btn, .link{
+button,
+a.link,
+.btn,
+.link {
     width: 100%;
     background-color: #ffffff;
     color: #080710;
@@ -196,22 +217,24 @@ button, a.link, .btn, .link{
     padding: 10px .2rem;
 }
 
-.userlistbtn{
-    padding: 25px 0; 
-    display: grid; 
-    place-items: center; 
-    width: 60%; 
+.userlistbtn {
+    padding: 25px 0;
+    display: grid;
+    place-items: center;
+    width: 60%;
 }
-.userlistbtn a{
+
+.userlistbtn a {
     width: 200px
 }
 
-header a, header div a{
-    width: 100px; 
+header a,
+header div a {
+    width: 100px;
     padding: 5px 10px;
 }
-  
-#btncontainer{
+
+#btncontainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
     place-items: center;
@@ -219,32 +242,36 @@ header a, header div a{
     margin-top: 20px;
 }
 
-form a:nth-child(3){
+form a:nth-child(3) {
     grid-column: 1/3;
 }
 
-a.link, .btn, a{
+a.link,
+.btn,
+a {
     text-decoration: none;
     text-align: center;
 }
-:visited{
+
+:visited {
     color: #000;
 }
-main{
+
+main {
     display: grid;
     justify-items: center;
 }
 
-.bountytd{
+.bountytd {
     margin-top: 20px;
 }
 
-.profilehome{
+.profilehome {
     margin-top: 25px;
     display: grid;
 }
 
-.gmap_canvas{
+.gmap_canvas {
     overflow: hidden;
     background: none !important;
     height: 100%;
@@ -252,22 +279,24 @@ main{
     text-align: center;
     font-size: 1.5rem;
 }
-.gmap_canvas h2{
+
+.gmap_canvas h2 {
     margin-bottom: 20px;
 }
 
-#wildWestQuote{
-    overflow-wrap: break-word; 
+#wildWestQuote {
+    overflow-wrap: break-word;
     hyphens: auto;
 }
 
-.mapouter{
+.mapouter {
     position: relative;
     text-align: right;
     height: 60vh;
     width: 100%;
 }
-footer{
+
+footer {
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 40px;
@@ -275,175 +304,185 @@ footer{
     line-height: 2rem;
 }
 
-footer div#dev{
-    text-align: end; 
-    border-right: 1px #fff solid ;
+footer div#dev {
+    text-align: end;
+    border-right: 1px #fff solid;
     padding-right: 20px;
 }
 
-.footerbtn{
-    grid-column: 1/3; 
-    display: grid; 
+.footerbtn {
+    grid-column: 1/3;
+    display: grid;
     place-items: center;
 }
 
-.footerbtn > *{
+.footerbtn>* {
     text-align: center;
 }
-.footerbtn div:nth-child(1){
+
+.footerbtn div:nth-child(1) {
     display: grid;
     gap: 10px;
     grid-template-columns: 1fr 1fr;
 }
-.lining{
+
+.lining {
     margin: 0;
     padding: 20px 0;
     border-top: 1px #fff solid;
     border-bottom: 1px #fff solid;
 }
-.bottomlining{
+
+.bottomlining {
     border-bottom: 1px #fff solid;
 }
-hr{
+
+hr {
     width: 60%;
     margin: 25px 0;
 }
 
-.inputfile-box {
-    position: relative;
-  }
-  
-  .inputfile {
-    display: none;
-  }
-  
-  .container {
-    display: inline-block;
-    width: 100%;
-  }
-  
-  .file-box {
-    display: inline-block;
-    width: 100%;
-    border: 1px solid;
-    padding: 5px 0px 5px 5px;
-    box-sizing: border-box;
-    height: calc(2rem - 1px);
-    text-align: left;
-  }
-  
-  .file-button {
-    background: #080710;
-    padding: 5px;
-    position: absolute;
-    border: 1px solid;
-    top: 0px;
-    right: 0px;
-  }
+.link {
+    border: 0;
+}
 
+input::placeholder {
+    color: white;
+}
+
+table {
+    display: grid;
+    place-items: center;
+    width: 100%;
+}
+table tr td{
+    border: 1px #fff solid;
+    text-align: center;
+    padding: 5px 20px;
+}
 
 @media (max-width:950px) {
-    
-    .bounty{
+
+    .bounty {
         grid-template-columns: repeat(3, 1fr);
         width: 90%;
     }
-    #search{
+
+    #search {
         grid-template-columns: 1fr;
     }
 }
 
 
 @media (max-width:630px) {
-    hr{
+    hr {
         width: 90%;
     }
-    header{
-        grid-template-columns: repeat(3,1fr);
+
+    header {
+        grid-template-columns: repeat(3, 1fr);
         margin-bottom: 20px !important;
     }
-    header > *:nth-child(1){
+
+    header>*:nth-child(1) {
         grid-column: 1/3;
         grid-row: 2/3;
     }
-    header > h1{
+
+    header>h1 {
         grid-column: 1/4;
     }
-    header > *:nth-child(3){
-        grid-column: 2/4 ;
+
+    header>*:nth-child(3) {
+        grid-column: 2/4;
         grid-row: 2/3;
         width: 100%;
         place-items: center;
     }
-    .bounty{
+
+    .bounty {
         width: 90%;
     }
 }
 
 @media (max-width:440px) {
-    hr{
+    hr {
         width: 100%;
     }
-    header{
+
+    header {
         grid-template-columns: 1fr;
         width: 100%;
         margin-bottom: 0px !important;
     }
-    header > h1{
+
+    header>h1 {
         grid-column: 1/2;
     }
-    header div{
+
+    header div {
         gap: 10px;
         grid-template-columns: 1fr;
         width: 100%;
     }
-    header div *, header a{
+
+    header div *,
+    header a {
         width: 90% !important;
     }
-    header h1{
+
+    header h1 {
         grid-column: 1/2;
         grid-row: 1/2;
     }
-    header a:nth-child(3){
+
+    header a:nth-child(3) {
         grid-column: 1/2;
         grid-row: 2/3;
     }
 
-    header a:nth-child(1){
+    header a:nth-child(1) {
         grid-column: 1/2;
         grid-row: 3/4;
         margin-bottom: 20px;
 
     }
-    header > *:nth-child(3) {
+
+    header>*:nth-child(3) {
         grid-column: 1/2;
         grid-row: 4/5;
     }
 
-    .bounty{
+    .bounty {
         grid-template-columns: 1fr 1fr;
     }
-    tr{
+
+    tr {
         grid-template-columns: repeat(6, 1fr);
     }
+
     td:nth-child(4) {
         grid-row: 2/3;
         grid-column: 1/4;
     }
+
     td:nth-child(5) {
         margin-top: 30px;
         grid-row: 3/4;
         grid-column: 2/6;
-        
+
     }
-    td:nth-child(5) a.link{
+
+    td:nth-child(5) a.link {
         width: 100%;
     }
+
     td:nth-child(6) {
         grid-row: 2/3;
         grid-column: 4/7;
     }
-    footer{
+
+    footer {
         padding: 0;
     }
 }

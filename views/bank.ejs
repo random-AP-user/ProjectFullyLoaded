@@ -1,0 +1,38 @@
+<%- include("partials/header") %>
+    <header style="margin: 0;">
+        <a class="link" href="/profile" style="width: 100px; padding: 5px 10px;">Profile</a>
+        <h1 style="text-align: center;">No Man's Land</h1>
+        <div>
+            <a class="link" href="/" style="width: 100px; padding: 5px 10px;">home</a>
+            <% if(typeof username !=='undefined' ){ %>
+                <a class="link" href="/logout" style="width: 100px; padding: 5px 10px;">Log out</a>
+                <% } else{ %>
+                    <a class="link" href="/login" style="width: 100px; padding: 5px 10px;">Login</a>
+                    <% } %>
+        </div>
+    </header>
+    <main>
+        <div id="editusers" style="width: min(500px, 90%); display: grid; place-items: center;">
+            <a class="link" href="/admin" style="width: 100%; padding: 5px 10px;">Admin panel</a>
+            <h1 id="bountytitle" style="margin-bottom: 0;">All users</h1>
+            <input type="text" id="searchInput" oninput="searchUsers()" placeholder="Search users...">
+        </div>
+        <hr>
+        <form action="/confirmedPayment" method="post" style="width: 100%;">
+            <table>
+                <tr>
+                    <td>Killer</td>
+                    <td>killed</td>
+                    <td>worth</td>
+                </tr>
+                <% collectedbounty.forEach((bounty)=> { %>
+                    <tr>
+                        <td><%= bounty.killer %></td>
+                        <td><%= bounty.killed %></td>
+                        <td><%= bounty.price %></td>
+                    </tr>
+                    <% }); %>
+                </table>
+            </form>
+        </main>
+    <%- include("partials/footer") %>

@@ -12,6 +12,8 @@ const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const webpush = require("web-push");
+const subscribers = require("./subscribers.json");
+const { render } = require('ejs');
 
 dotenv.config({ path: './.env' });
 
@@ -299,6 +301,20 @@ app.get("/admin", (req, res) => {
   }
 });
 
+
+app.get("/bank", (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
+    q = "SELECT cb.price, cb.killedID, u.username AS killer, u2.username AS killed FROM collectedbounty cb INNER JOIN users u ON cb.userID = u.userID INNER JOIN users u2 ON cb.killedID = u2.userID";
+    db.query(q, (err, rows) => {
+      if (err) throw err;
+      console.log(rows)
+      res.render("bank.ejs", { collectedbounty: rows, username: req.session.username });
+    });
+  }
+});
+
 app.get("/users", (req, res) => {
   if (req.session.admin != 1) {
     res.redirect("/");
@@ -306,7 +322,7 @@ app.get("/users", (req, res) => {
     q = "SELECT * from users";
     db.query(q, (err, row) => {
       if (err) throw err;
-      res.render("users.ejs", {username: req.session.username, users: row });
+      res.render("users.ejs", { username: req.session.username, users: row });
     });
   }
 });
@@ -329,6 +345,7 @@ app.post("/edituser", upload.single('userimage'), (req, res) => {
         if (err) {
           throw err;
         }
+        res.redirect("/users");
       });
     } else {
       const password = req.body.password;
@@ -336,17 +353,49 @@ app.post("/edituser", upload.single('userimage'), (req, res) => {
         if (hashErr) {
           throw hashErr;
         }
-        console.log(hashedPassword);
-        console.log(req.body.oldpassword);
         q = "UPDATE users SET username = ?, password = ?, image = ? WHERE userID = ?";
         db.query(q, [username, hashedPassword, userimage, userID], (err, rows) => {
           if (err) {
             throw err;
           }
+          res.redirect("/users");
         });
       });
     }
-    res.redirect("/users");
+  }
+});
+
+
+app.get("/makeadmin", (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
+    q = "SELECT username, image, admin, userID from users";
+    db.query(q, (err, row) => {
+      if (err) throw err;
+      res.render("makeadmin.ejs", { admin: req.session.admin, users: row });
+    });
+  }
+});
+
+app.post("/giveadmin", (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else if (req.body.secret == "9999") {
+    console.log(req.body.secret);
+    const userID = req.body.userID;
+    let admin = 0;
+    if (req.body.newAdmin != undefined) {
+      admin = 1;
+    }
+
+    q = "UPDATE users SET admin = ? WHERE userID = ?";
+    db.query(q, [admin, userID], (err, row) => {
+      if (err) throw err;
+      res.redirect("/makeadmin");
+    });
+  } else {
+    res.redirect("/makeadmin");
   }
 });
 
@@ -412,7 +461,7 @@ app.post("/subscribe", async (req, res) => {
   }
 });
 
-const subscribers = require("./subscribers.json");
+
 async function sendPushNotification(title, message, icon) {
   for (let i = 0; i < subscribers.length; i++) {
     const subscription = subscribers[i];

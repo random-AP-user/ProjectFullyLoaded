@@ -23,32 +23,19 @@
         <div id="userList" class="bounty" style="min-height: 200px;">
             <% users.forEach((user)=> { %>
                 <div class="user">
-                    <form action="/edituser" method="post" enctype="multipart/form-data">
+                    <form action="/giveadmin" method="post">
                         <div>
                             <img src="images/<%= user.image %>" alt="Wanted Person">
                             <br>
                             <br>
                             <div class="adminsubmit">
-                                <input type="text" name="oldimagename" value="<%= user.image %>" style="display: none;">
-                                <input type="text" name="userID" value="<%= user.userID %>" style="display: none;">
-                                <input type="text" name="username" value="<%= user.username %>">
-                                <input type="text" name="oldpassword" value="<%= user.password %>"
-                                    style="display: none;">
-                                <input type="password" name="password" value="" placeholder="New password">
-                                <input type="file" name="userimage" style="padding-top: 10px ;">
-                                <div style="display: grid; grid-template-columns: 20% 1fr;">
-                                    <input type="checkbox" name="verify" required>
-                                    <input class="link" style="border: none;" type="submit" value="Save changes">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <form action="/deletebounty" method="post">
-                        <div class="adminsubmit">
-                            <input type="text" name="bountyID" value="<%= user.bountyID %>" style="display: none;">
-                            <div style="display: grid; grid-template-columns: 20% 1fr;">
-                                <input type="checkbox" name="verify" required>
-                                <input class="link" style="border: none;" type="submit" value="DELETE USER">
+                                <h3>
+                                    <%= user.username %>
+                                </h3>
+                                <input type="text" name="userID" style="display: none;" value="<%= user.userID %>">
+                                <input type="checkbox" name="newAdmin" <%=user.admin ? "checked" : "" %> onChange="this.form.submit()">
+                                <p>security question:</p>
+                                <input type="text" name="secret" placeholder="XXXX" required>
                             </div>
                         </div>
                     </form>

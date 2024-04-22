@@ -15,7 +15,7 @@
     <div id="editusers" style="width: min(500px, 90%); display: grid; place-items: center;">
             <a class="link" href="/users" style="width: 100%; padding: 5px 10px;">Edit users</a>
         <h1 id="bountytitle" style="margin-bottom: 0;">Available bounties</h1>
-        <input type="text" id="searchInputAV" oninput="searchUsers('AVusers')" placeholder="Search available bounties">
+        <input type="text"  id="searchInputAV" oninput="searchUsers('AVusers')" placeholder="Search available bounties...">
     </div>
     <hr>
     <div class="bounty" style="min-height: 200px;">
@@ -29,7 +29,7 @@
                 <div class="adminsubmit">
                     <input type="text" name="userID" value="<%= user.userID %>" style="display: none;">
                     <input type="text" name="price" value="<%= user.price %>">
-                    <input type="submit" value="submit">
+                    <input class="link" style="border: none;" type="submit" value="submit">
                 </div>
             </div>
         </form>
@@ -49,14 +49,14 @@
                     <div class="adminsubmit">
                         <input type="text" name="bountyID" value="<%= user.bountyID %>" style="display: none;">
                         <input type="text" name="price" value="<%= user.price %>">
-                        <input type="submit" value="Change bounty">
+                        <input class="link" style="border: none;"  type="submit" value="Change bounty">
                     </div>
                 </div>
             </form>
             <form action="/deletebounty" method="post">
                 <div class="adminsubmit">
                     <input type="text" name="bountyID" value="<%= user.bountyID %>" style="display: none;">
-                    <input type="submit" value="Delete Bounty">
+                    <input class="link" style="border: none;"  type="submit" value="Delete Bounty">
                 </div>
             </form>
         </div>
