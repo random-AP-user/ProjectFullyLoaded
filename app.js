@@ -27,7 +27,10 @@ if (!fs.existsSync(linkPath)) {
       console.log(`Link created: ${linkPath} -> ${targetPath}`);
     }
   });
+} else {
+  console.log(`Symbolic link already exists: ${linkPath}`);
 }
+
 
 dotenv.config({ path: './.env' });
 
