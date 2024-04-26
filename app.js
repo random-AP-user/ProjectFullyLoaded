@@ -23,7 +23,7 @@ const server = http.createServer(app);
 const io = require("socket.io")(server);
 
 const storage = SharpMulter({
-  destination: (req, file, cb) => cb(null, "./public/images"),
+  destination: (req, file, cb) => cb(null, "/var/lib/data"),
   imageOptions: {
     fileFormat: "webp",
     quality: 80,
@@ -76,6 +76,9 @@ app.get("/", (req, res) => {
     res.render("home.ejs", { users: rows, username: req.session.username, admin: req.session.admin });
   });
 });
+
+// Serve images from /var/lib/data in /public/images
+app.use("/public/images", express.static('/var/lib/data'));
 
 app.get("/login", (req, res) => {
   res.render("login.ejs");
