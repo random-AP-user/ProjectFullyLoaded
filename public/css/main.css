@@ -100,7 +100,7 @@ header a:nth-child(3) {
 .bounty {
     display: grid;
     gap: 20px;
-    width: 60%;
+    width: 50%;
     grid-template-columns: repeat(5, 1fr);
     text-align: center;
 }
@@ -320,10 +320,8 @@ footer div#dev {
     text-align: center;
 }
 
-.footerbtn div:nth-child(1) {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: 1fr 1fr;
+.footerbtn div a{
+    padding: 5px 20px;
 }
 
 .lining {
@@ -409,7 +407,7 @@ table tr td{
     hr {
         width: 100%;
     }
-
+    
     header {
         grid-template-columns: 1fr;
         width: 100%;
@@ -484,5 +482,10 @@ table tr td{
 
     footer {
         padding: 0;
+    }
+}
+@media (max-width:320px) {
+    .bounty {
+        grid-template-columns: 1fr;
     }
 }

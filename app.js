@@ -248,25 +248,28 @@ app.get("/collected", (req, res) => {
 app.post("/addbounty", (req, res) => {
   const userID = req.body.userID;
   const price = req.body.price;
-
-  const randomNumber = Math.floor(Math.random() * 10000);
-  const formattedRandomNumber = randomNumber.toString().padStart(4, '0');
-
-  q = "select username, image from users where userID = ?";
-  db.query(q, [userID], (err, row) => {
-    if (err) throw err;
-    message = `Bounty on ${row[0].username}\nReward: ৳${req.body.price}`;
-    fullUrl = `${req.protocol}://${req.get('host')}/images/`;
-    icon = `${fullUrl}${row[0].image}`;
-    const number = Math.floor(Math.random() * 10001);
-    q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, ?);";
-    db.query(q2, [userID, price, formattedRandomNumber], (err2, row2) => {
-      if (err2) throw err2;
-      io.sockets.emit("bountyUpdate");
-      sendPushNotification("ALERT: New Bounty", message, icon);
-      res.redirect("/admin");
+  if(userID == 82 || userID == 81){
+    res.redirect("/admin");
+  }else{
+    const randomNumber = Math.floor(Math.random() * 10000);
+    const formattedRandomNumber = randomNumber.toString().padStart(4, '0');
+  
+    q = "select username, image from users where userID = ?";
+    db.query(q, [userID], (err, row) => {
+      if (err) throw err;
+      message = `Bounty on ${row[0].username}\nReward: ৳${req.body.price}`;
+      fullUrl = `${req.protocol}://${req.get('host')}/images/`;
+      icon = `${fullUrl}${row[0].image}`;
+      const number = Math.floor(Math.random() * 10001);
+      q2 = "INSERT INTO `bounty` (`userID`, `price`, `secretcode`) VALUES (?, ?, ?);";
+      db.query(q2, [userID, price, formattedRandomNumber], (err2, row2) => {
+        if (err2) throw err2;
+        io.sockets.emit("bountyUpdate");
+        sendPushNotification("ALERT: New Bounty", message, icon);
+        res.redirect("/admin");
+      });
     });
-  });
+  }
 });
 app.post("/changebounty", (req, res) => {
   const bountyID = req.body.bountyID;
