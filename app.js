@@ -16,21 +16,7 @@ const subscribers = require("./subscribers.json");
 const { render } = require('ejs');
 const childProcess = require('child_process');
 
-const linkPath = '~/project/src/public/images';
-const targetPath = '/var/lib/data';
-
-if (!fs.existsSync(linkPath)) {
-  childProcess.exec(`ln -s ${targetPath} ${linkPath}`, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log(`Link created: ${linkPath} -> ${targetPath}`);
-    }
-  });
-} else {
-  console.log(`Symbolic link already exists: ${linkPath}`);
-}
-
+console.log("remember: ln -s /var/lib/data ~/project/src/public/images")
 
 dotenv.config({ path: './.env' });
 
@@ -465,7 +451,7 @@ app.get("/refreshUsers", (req, res) => {
   res.json({ activeUsers: activeUsers });
 });
 
-setInterval(test, 2000);
+setInterval(test, 120000);
 
 const publicVapidKey = process.env.publicKey;
 const privateVapidKey = process.env.privateKey;
