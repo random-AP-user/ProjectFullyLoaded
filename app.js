@@ -17,6 +17,18 @@ const { render } = require('ejs');
 
 dotenv.config({ path: './.env' });
 
+const linkPath = '/var/lib/data/images';
+const targetPath = `${process.env.HOME}/public/images`;
+
+// Check if the link already exists
+if (!fs.existsSync(linkPath)) {
+  // Create the symbolic link
+  fs.symlinkSync(targetPath, linkPath, 'dir');
+  console.log(`Symbolic link created from ${linkPath} to ${targetPath}`);
+} else {
+  console.log(`Symbolic link already exists at ${linkPath}`);
+}
+
 const app = express();
 const server = http.createServer(app);
 
