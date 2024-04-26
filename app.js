@@ -344,6 +344,20 @@ app.get("/users", (req, res) => {
   }
 });
 
+app.post("/deleteuser", (req, res) => {
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
+    const userID = req.body.userID;
+    q3 = "DELETE FROM users WHERE userID = ?";
+    db.query(q3, [userID], (err, rows) => {
+      if (err) throw err;
+      io.sockets.emit("bountyUpdate");
+      res.redirect("/users");
+  });
+  }
+})
+
 app.post("/edituser", upload.single('userimage'), (req, res) => {
   if (req.session.admin != 1) {
     res.redirect("/");
