@@ -451,7 +451,7 @@ app.get("/refreshUsers", (req, res) => {
   res.json({ activeUsers: activeUsers });
 });
 
-setInterval(test, 120000);
+
 
 const publicVapidKey = process.env.publicKey;
 const privateVapidKey = process.env.privateKey;
