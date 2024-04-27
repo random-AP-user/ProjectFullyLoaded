@@ -8,7 +8,7 @@ const flash = require("connect-flash");
 const bodyParser = require("body-parser");
 const SharpMulter = require("sharp-multer");
 const path = require("path");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const webpush = require("web-push");
@@ -16,7 +16,7 @@ const subscribers = require("./subscribers.json");
 const { render } = require('ejs');
 const childProcess = require('child_process');
 
-console.log("remember: ln -s /var/lib/data ~/project/src/public/images")
+console.log("remember: ln -s /var/lib/data ~/project/src/public/images");
 
 dotenv.config({ path: './.env' });
 
@@ -25,29 +25,18 @@ const server = http.createServer(app);
 
 const io = require("socket.io")(server);
 
-const storage = SharpMulter({
-  destination: (req, file, cb) => cb(null, "/var/lib/data"),
-  imageOptions: {
-    fileFormat: "webp",
-    quality: 80,
-    resize: { width: 400, height: 400, resizeMode: "cover" },
-  },
-  filename: (og, opt) => {
-    newname = Date.now() + "." + opt.fileFormat;
-    return newname;
-  },
-});
-
-const upload = multer({ storage: storage });
-const db = mysql.createConnection({
+const db = mysql.createPool({
+  connectionLimit: 10,
   host: process.env.HOST,
   user: process.env.USER,
   password: process.env.PASSWORD,
   database: process.env.DATABASE
 });
 
-db.connect((err) => {
+// Use connection pool for querying
+db.query('SELECT 1', (err, rows) => {
   if (err) throw err;
+  console.log('Connected to database');
 });
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -72,15 +61,33 @@ io.on("connection", (socket) => {
   });
 });
 
+const storage = SharpMulter({
+  destination: (req, file, cb) => cb(null, "/var/lib/data"),
+  imageOptions: {
+    fileFormat: "webp",
+    quality: 80,
+    resize: { width: 400, height: 400, resizeMode: "cover" },
+  },
+  filename: (og, opt) => {
+    newname = Date.now() + "." + opt.fileFormat;
+    return newname;
+  },
+});
+
+const upload = multer({ storage: storage });
+
 app.get("/", (req, res) => {
-  q = "SELECT u.username, u.image, b.price FROM users u LEFT JOIN bounty b ON u.userID = b.userID WHERE u.userID = b.userID ORDER BY b.price DESC";
+  const q = "SELECT u.username, u.image, b.price FROM users u LEFT JOIN bounty b ON u.userID = b.userID WHERE u.userID = b.userID ORDER BY b.price DESC";
   db.query(q, (err, rows) => {
-    if (err) throw err;
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).send('Error retrieving data');
+      return;
+    }
     res.render("home.ejs", { users: rows, username: req.session.username, admin: req.session.admin });
   });
 });
 
-// Serve images from /var/lib/data in /public/images
 app.use("/public/images", express.static('/var/lib/data'));
 
 app.get("/login", (req, res) => {
@@ -99,9 +106,10 @@ app.get("/logout", (req, res) => {
 app.post("/loginuser", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  q = "SELECT * FROM users WHERE username = ?";
+  const q = "SELECT * FROM users WHERE username = ?";
   db.query(q, [username], async (err, rows) => {
     if (err) {
+      console.error('Error executing query:', err);
       res.status(500).send('Error retrieving user');
       return;
     }
@@ -126,8 +134,13 @@ app.get('/profile', (req, res) => {
   if (req.session.username == undefined) {
     res.redirect("/login");
   } else {
-    q = "SELECT secretcode , price FROM bounty b WHERE userID = (SELECT userID FROM users u WHERE userID = ?)";
+    const q = "SELECT secretcode , price FROM bounty b WHERE userID = (SELECT userID FROM users u WHERE userID = ?)";
     db.query(q, [req.session.userID], (err, rows) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        res.status(500).send('Error retrieving data');
+        return;
+      }
       res.render('profile.ejs', { username: req.session.username, image: req.session.image, id: req.session.userID, query: rows[0] });
     });
   }
@@ -141,13 +154,17 @@ app.post("/registeruser", upload.single('userimage'), (req, res) => {
   const verifypassword = req.body.verifypassword;
   const userimage = req.file.filename;
 
-  q = "SELECT * FROM users WHERE username = ?";
+  const q = "SELECT * FROM users WHERE username = ?";
   db.query(q, [username], (err, rows) => {
-    if (err) throw err;
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).send('Error retrieving data');
+      return;
+    }
 
     if (rows.length > 0) {
       console.log("Duplicate found");
-      fs.unlinkSync(req.file.path, (unlinkErr) => {
+      fs.unlink(req.file.path, (unlinkErr) => {
         if (unlinkErr) {
           console.error('Error deleting file:', unlinkErr);
         } else {
@@ -160,12 +177,16 @@ app.post("/registeruser", upload.single('userimage'), (req, res) => {
     if (password === verifypassword) {
       bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
         if (hashErr) {
-          throw hashErr;
+          console.error('Error hashing password:', hashErr);
+          res.status(500).send('Error hashing password');
+          return;
         }
-        q = "INSERT INTO users(username, password, image) VALUES (?, ?, ?)";
+        const q = "INSERT INTO users(username, password, image) VALUES (?, ?, ?)";
         db.query(q, [username, hashedPassword, userimage], (err, rows) => {
           if (err) {
-            throw err;
+            console.error('Error executing query:', err);
+            res.status(500).send('Error inserting data');
+            return;
           }
           res.redirect("/login");
         });
@@ -175,7 +196,6 @@ app.post("/registeruser", upload.single('userimage'), (req, res) => {
     }
   });
 });
-
 
 app.post("/claim", (req, res) => {
   if (req.session.username == undefined) {
@@ -508,19 +528,6 @@ async function sendPushNotification(title, message, icon) {
   fs.writeFileSync("./subscribers.json", JSON.stringify(subscribers, null, 2));
 }
 
-function getIPAddress() {
-  let interfaces = os.networkInterfaces();
-  for (let devName in interfaces) {
-    let iface = interfaces[devName];
-
-    for (let i = 0; i < iface.length; i++) {
-      let alias = iface[i];
-      if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal)
-        return alias.address;
-    }
-  }
-  return '0.0.0.0';
-}
 
 port = process.env.PORT || 10000;
 ipwifi = "127.0.0.1";
