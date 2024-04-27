@@ -15,24 +15,26 @@
         <div id="editusers" style="width: min(500px, 90%); display: grid; place-items: center;">
             <a class="link" href="/admin" style="width: 100%; padding: 5px 10px;">Admin panel</a>
             <h1 id="bountytitle" style="margin-bottom: 0;">All users</h1>
-            <input type="text" id="searchInput" oninput="searchUsers()" placeholder="Search users...">
         </div>
         <hr>
-        <form action="/confirmedPayment" method="post" style="width: 100%;">
             <table>
                 <tr>
                     <td>Killer</td>
                     <td>killed</td>
                     <td>worth</td>
+                    <td style="padding:0 60px;">button</td>
                 </tr>
                 <% collectedbounty.forEach((bounty)=> { %>
-                    <tr>
-                        <td><%= bounty.killer %></td>
-                        <td><%= bounty.killed %></td>
-                        <td><%= bounty.price %></td>
-                    </tr>
+                    <form action="/bankconfirm" method="post">
+                        <tr>
+                            <td><%= bounty.killer %></td>
+                            <td><%= bounty.killed %></td>
+                            <td><%= bounty.price %></td>
+                            <input type="text" name="collectedbountyID" style="display: none;" value="<%= bounty.collectedbountyID %>">
+                            <td><button class="link">confim payment</button></td>
+                        </tr>
+                    </form>
                     <% }); %>
                 </table>
-            </form>
         </main>
     <%- include("partials/footer") %>

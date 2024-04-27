@@ -335,14 +335,26 @@ app.get("/bank", (req, res) => {
   if (req.session.admin != 1) {
     res.redirect("/");
   } else {
-    q = "SELECT cb.price, cb.killedID, u.username AS killer, u2.username AS killed FROM collectedbounty cb INNER JOIN users u ON cb.userID = u.userID INNER JOIN users u2 ON cb.killedID = u2.userID";
+    q = "SELECT u1.username AS killer, u2.username AS killed, cb.price, collectedbountyID FROM collectedbounty AS cb LEFT JOIN users AS u1 ON cb.userID = u1.userID LEFT JOIN users AS u2 ON cb.killedID = u2.userID WHERE cb.collected = 0;";
     db.query(q, (err, rows) => {
       if (err) throw err;
-      console.log(rows)
       res.render("bank.ejs", { collectedbounty: rows, username: req.session.username });
     });
   }
 });
+
+app.post("/bankconfirm",(req,res) =>{
+  if (req.session.admin != 1) {
+    res.redirect("/");
+  } else {
+    q = "UPDATE `collectedbounty` SET `collected`='1' WHERE collectedbountyID = ?";
+    db.query(q, [req.body.collectedbountyID], (err, rows) => {
+      if (err) throw err;
+
+      res.redirect("/bank");
+    });
+  }
+})
 
 app.get("/users", (req, res) => {
   if (req.session.admin != 1) {
